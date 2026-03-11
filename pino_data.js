@@ -1,65 +1,65 @@
 const PINO_GROUPS = [
   {
-    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm",
-    "name": "Mesa de Luz Retro / Nordica 40 x 60 x 30cm",
+    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm-retro",
+    "name": "Mesa de Luz Retro",
     "open": true,
     "products": [
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001-retro",
         "name": "Mesa de Luz 1 Cajón y 1 Hueco",
         "sku": "2500",
         "price": 21064.92
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002-retro",
         "name": "Mesa de Luz 1 Cajón y 2 Hueco",
         "sku": "2501",
         "price": 22268.63
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003-retro",
         "name": "Mesa de Luz 1 Cajón y Puerta",
         "sku": "2502",
         "price": 23584.37
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004-retro",
         "name": "Mesa de Luz 2 Cajones y 1 Hueco",
         "sku": "2503",
         "price": 24240.86
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005-retro",
         "name": "Mesa de Luz 1 Pta Chica y 1 Hueco",
         "sku": "2504",
         "price": 22041.62
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-006",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-006-retro",
         "name": "Mesa Luz Sommier 1 Caj y Pta Grande",
         "sku": "2506",
         "price": 27326.36
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-007",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-007-retro",
         "name": "Mesa Luz Sommier Pta Chica y 2 Huecos",
         "sku": "2507",
         "price": 27326.36
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-008",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-008-retro",
         "name": "Mesa Luz Sommier 1 Hueco, cajon y Puerta",
         "sku": "2510",
         "price": 32463.38
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-009",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-009-retro",
         "name": "Mesa de Luz Flotante Cajon Solo",
         "sku": "2508",
         "price": 15648.22
       },
       {
-        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-010",
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-010-retro",
         "name": "Mesa de Luz Flotante Cajon y Hueco",
         "sku": "2509",
         "price": 17588.6
@@ -67,36 +67,103 @@ const PINO_GROUPS = [
     ]
   },
   {
-    "id": "grp-rack-lcd-retro-nordico-120-x-60-x-30cm",
-    "name": "Rack LCD Retro / Nordico 120 x 60 x 30cm",
+    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm-nordico",
+    "name": "Mesa de Luz Nordico",
+    "open": true,
+    "products": [
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001-nordico",
+        "name": "Mesa de Luz 1 Cajón y 1 Hueco",
+        "sku": "2500",
+        "price": 21064.92
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002-nordico",
+        "name": "Mesa de Luz 1 Cajón y 2 Hueco",
+        "sku": "2501",
+        "price": 22268.63
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003-nordico",
+        "name": "Mesa de Luz 1 Cajón y Puerta",
+        "sku": "2502",
+        "price": 23584.37
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004-nordico",
+        "name": "Mesa de Luz 2 Cajones y 1 Hueco",
+        "sku": "2503",
+        "price": 24240.86
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005-nordico",
+        "name": "Mesa de Luz 1 Pta Chica y 1 Hueco",
+        "sku": "2504",
+        "price": 22041.62
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-006-nordico",
+        "name": "Mesa Luz Sommier 1 Caj y Pta Grande",
+        "sku": "2506",
+        "price": 27326.36
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-007-nordico",
+        "name": "Mesa Luz Sommier Pta Chica y 2 Huecos",
+        "sku": "2507",
+        "price": 27326.36
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-008-nordico",
+        "name": "Mesa Luz Sommier 1 Hueco, cajon y Puerta",
+        "sku": "2510",
+        "price": 32463.38
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-009-nordico",
+        "name": "Mesa de Luz Flotante Cajon Solo",
+        "sku": "2508",
+        "price": 15648.22
+      },
+      {
+        "id": "pi-mesa-de-luz-retro-nordica-40-x-60-x-30cm-010-nordico",
+        "name": "Mesa de Luz Flotante Cajon y Hueco",
+        "sku": "2509",
+        "price": 17588.6
+      }
+    ]
+  },
+  {
+    "id": "grp-rack-lcd-retro-nordico-120-x-60-x-30cm-retro",
+    "name": "Rack LCD Retro 120",
     "open": false,
     "products": [
       {
-        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-001",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-001-retro",
         "name": "120cm 2 Ptas Grandes y 2 Hueco",
         "sku": "2520",
         "price": 45625.99
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-002",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-002-retro",
         "name": "120cm 2 Caj. 2 Ptas y 2 Huecos",
         "sku": "2521",
         "price": 52240.12
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-003",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-003-retro",
         "name": "120cm 2 Ptas Chicas y 4 Huecos (encargar)",
         "sku": "2522",
         "price": 48498.13
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-004",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-004-retro",
         "name": "120cm 1 Pta Grande y 2 Huecos",
         "sku": "2523",
         "price": 38585.15
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-005",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-005-retro",
         "name": "120cm 4 Huecos Eco",
         "sku": "2524",
         "price": 34907.58
@@ -104,30 +171,67 @@ const PINO_GROUPS = [
     ]
   },
   {
-    "id": "grp-rack-lcd-retro-nordico-150-x-60-x-30cm",
-    "name": "Rack LCD Retro / Nordico 150 x 60 x 30cm",
+    "id": "grp-rack-lcd-retro-nordico-120-x-60-x-30cm-nordico",
+    "name": "Rack LCD Nordico 120",
     "open": false,
     "products": [
       {
-        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-001",
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-001-nordico",
+        "name": "120cm 2 Ptas Grandes y 2 Hueco",
+        "sku": "2520",
+        "price": 45625.99
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-002-nordico",
+        "name": "120cm 2 Caj. 2 Ptas y 2 Huecos",
+        "sku": "2521",
+        "price": 52240.12
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-003-nordico",
+        "name": "120cm 2 Ptas Chicas y 4 Huecos (encargar)",
+        "sku": "2522",
+        "price": 48498.13
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-004-nordico",
+        "name": "120cm 1 Pta Grande y 2 Huecos",
+        "sku": "2523",
+        "price": 38585.15
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-120-x-60-x-30cm-005-nordico",
+        "name": "120cm 4 Huecos Eco",
+        "sku": "2524",
+        "price": 34907.58
+      }
+    ]
+  },
+  {
+    "id": "grp-rack-lcd-retro-nordico-150-x-60-x-30cm-retro",
+    "name": "Rack LCD Retro 150",
+    "open": false,
+    "products": [
+      {
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-001-retro",
         "name": "150cm 2 Ptas Grandes y 2 Huecos",
         "sku": "2530",
         "price": 51370.27
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-002",
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-002-retro",
         "name": "150cm 2 Caj. 2 Ptas y 2 Huecos",
         "sku": "2531",
         "price": 57967.99
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-003",
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-003-retro",
         "name": "150cm 2 Puertas Chicas y 4 Huecos",
         "sku": "2532",
         "price": 54669.13
       },
       {
-        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-004",
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-004-retro",
         "name": "150cm 4 Huecos Eco",
         "sku": "2534",
         "price": 39301.12
@@ -135,48 +239,128 @@ const PINO_GROUPS = [
     ]
   },
   {
-    "id": "grp-escritorio-retro-nordico",
-    "name": "Escritorio Retro / Nordico",
+    "id": "grp-rack-lcd-retro-nordico-150-x-60-x-30cm-nordico",
+    "name": "Rack LCD Nordico 150",
     "open": false,
     "products": [
       {
-        "id": "pi-escritorio-retro-nordico-001",
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-001-nordico",
+        "name": "150cm 2 Ptas Grandes y 2 Huecos",
+        "sku": "2530",
+        "price": 51370.27
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-002-nordico",
+        "name": "150cm 2 Caj. 2 Ptas y 2 Huecos",
+        "sku": "2531",
+        "price": 57967.99
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-003-nordico",
+        "name": "150cm 2 Puertas Chicas y 4 Huecos",
+        "sku": "2532",
+        "price": 54669.13
+      },
+      {
+        "id": "pi-rack-lcd-retro-nordico-150-x-60-x-30cm-004-nordico",
+        "name": "150cm 4 Huecos Eco",
+        "sku": "2534",
+        "price": 39301.12
+      }
+    ]
+  },
+  {
+    "id": "grp-escritorio-retro-nordico-retro",
+    "name": "Escritorio Retro",
+    "open": false,
+    "products": [
+      {
+        "id": "pi-escritorio-retro-nordico-001-retro",
         "name": "Escritorio 80cm x 40cm Caj y Hueco",
         "sku": "2550",
         "price": 32824.45
       },
       {
-        "id": "pi-escritorio-retro-nordico-002",
+        "id": "pi-escritorio-retro-nordico-002-retro",
         "name": "Escritorio 80cm x 40cm 2 Cajones",
         "sku": "2551",
         "price": 37255.76
       },
       {
-        "id": "pi-escritorio-retro-nordico-003",
+        "id": "pi-escritorio-retro-nordico-003-retro",
         "name": "Escritorio 100cm x 40cm 1 Cajón",
         "sku": "2553",
         "price": 37748.12
       },
       {
-        "id": "pi-escritorio-retro-nordico-004",
+        "id": "pi-escritorio-retro-nordico-004-retro",
         "name": "Escritorio 120cm x 40cm 2 Caj y Hueco",
         "sku": "2552",
         "price": 42327.13
       },
       {
-        "id": "pi-escritorio-retro-nordico-005",
+        "id": "pi-escritorio-retro-nordico-005-retro",
         "name": "Escritorio Retro 80cm x 50cm 2 Cajones",
         "sku": "2556",
         "price": 46570.13
       },
       {
-        "id": "pi-escritorio-retro-nordico-006",
+        "id": "pi-escritorio-retro-nordico-006-retro",
         "name": "Escritorio Retro 100cm x 50cm 1 Cajón",
         "sku": "2559",
         "price": 47185.46
       },
       {
-        "id": "pi-escritorio-retro-nordico-007",
+        "id": "pi-escritorio-retro-nordico-007-retro",
+        "name": "Escritorio Retro 120cm x 50cm 2 Caj y Hueco",
+        "sku": "2557",
+        "price": 52908.68
+      }
+    ]
+  },
+  {
+    "id": "grp-escritorio-retro-nordico-nordico",
+    "name": "Escritorio Nordico",
+    "open": false,
+    "products": [
+      {
+        "id": "pi-escritorio-retro-nordico-001-nordico",
+        "name": "Escritorio 80cm x 40cm Caj y Hueco",
+        "sku": "2550",
+        "price": 32824.45
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-002-nordico",
+        "name": "Escritorio 80cm x 40cm 2 Cajones",
+        "sku": "2551",
+        "price": 37255.76
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-003-nordico",
+        "name": "Escritorio 100cm x 40cm 1 Cajón",
+        "sku": "2553",
+        "price": 37748.12
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-004-nordico",
+        "name": "Escritorio 120cm x 40cm 2 Caj y Hueco",
+        "sku": "2552",
+        "price": 42327.13
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-005-nordico",
+        "name": "Escritorio Retro 80cm x 50cm 2 Cajones",
+        "sku": "2556",
+        "price": 46570.13
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-006-nordico",
+        "name": "Escritorio Retro 100cm x 50cm 1 Cajón",
+        "sku": "2559",
+        "price": 47185.46
+      },
+      {
+        "id": "pi-escritorio-retro-nordico-007-nordico",
         "name": "Escritorio Retro 120cm x 50cm 2 Caj y Hueco",
         "sku": "2557",
         "price": 52908.68
@@ -505,18 +689,37 @@ const PINO_GROUPS = [
     ]
   },
   {
-    "id": "grp-bibliotecas-cubo-retro-nordica-100-x-40cm",
-    "name": "Bibliotecas Cubo Retro / Nordica 100 x 40cm",
+    "id": "grp-bibliotecas-cubo-retro-nordica-100-x-40cm-retro",
+    "name": "Bibliotecas Cubo Retro 100 x 40cm",
     "open": false,
     "products": [
       {
-        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-001",
+        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-001-retro",
         "name": "Biblioteca 1 Pta Grande y 1 Hueco",
         "sku": "2560",
         "price": 30854.99
       },
       {
-        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-002",
+        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-002-retro",
+        "name": "Biblioteca 2 Cajones y 2 Huecos",
+        "sku": "2563",
+        "price": 34826.75
+      }
+    ]
+  },
+  {
+    "id": "grp-bibliotecas-cubo-retro-nordica-100-x-40cm-nordico",
+    "name": "Bibliotecas Cubo Nordico 100 x 40cm",
+    "open": false,
+    "products": [
+      {
+        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-001-nordico",
+        "name": "Biblioteca 1 Pta Grande y 1 Hueco",
+        "sku": "2560",
+        "price": 30854.99
+      },
+      {
+        "id": "pi-bibliotecas-cubo-retro-nordica-100-x-40cm-002-nordico",
         "name": "Biblioteca 2 Cajones y 2 Huecos",
         "sku": "2563",
         "price": 34826.75
@@ -525,7 +728,7 @@ const PINO_GROUPS = [
   },
   {
     "id": "grp-m-queso-con-cajones-alto-80cm",
-    "name": "M. Queso Con Cajones Alto 80cm",
+    "name": "M. Queso Con Cajones Alto",
     "open": false,
     "products": [
       {
@@ -597,18 +800,37 @@ const PINO_GROUPS = [
     ]
   },
   {
-    "id": "grp-bibliotecas-cubo-retro-nordica-140-x-40cm",
-    "name": "Bibliotecas Cubo Retro / Nordica 140 x 40cm",
+    "id": "grp-bibliotecas-cubo-retro-nordica-140-x-40cm-retro",
+    "name": "Bibliotecas Cubo Retro 140 x 40cm",
     "open": false,
     "products": [
       {
-        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-001",
+        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-001-retro",
         "name": "Biblioteca 1 Pta Grande y 2 Huecos",
         "sku": "2570",
         "price": 39258.05
       },
       {
-        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-002",
+        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-002-retro",
+        "name": "Biblioteca 2 Cajones y 3 Huecos",
+        "sku": "2573",
+        "price": 43426.75
+      }
+    ]
+  },
+  {
+    "id": "grp-bibliotecas-cubo-retro-nordica-140-x-40cm-nordico",
+    "name": "Bibliotecas Cubo Nordico 140 x 40cm",
+    "open": false,
+    "products": [
+      {
+        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-001-nordico",
+        "name": "Biblioteca 1 Pta Grande y 2 Huecos",
+        "sku": "2570",
+        "price": 39258.05
+      },
+      {
+        "id": "pi-bibliotecas-cubo-retro-nordica-140-x-40cm-002-nordico",
         "name": "Biblioteca 2 Cajones y 3 Huecos",
         "sku": "2573",
         "price": 43426.75

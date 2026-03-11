@@ -1,35 +1,72 @@
 const MELAMINA_GROUPS = [
   {
-    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm",
-    "name": "Mesa de Luz Retro / Nordica 40 x 60 x 30cm",
+    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm-retro",
+    "name": "Mesa de Luz Retro",
     "open": true,
     "products": [
       {
-        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001",
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001-retro",
         "name": "Mesa de Luz 1 Cajón y 1 Hueco",
         "sku": "M2500",
         "price": 30651.2
       },
       {
-        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002",
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002-retro",
         "name": "Mesa de Luz Cajón y Pta",
         "sku": "M2502",
         "price": 34315.66
       },
       {
-        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003",
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003-retro",
         "name": "Mesa de Luz 1 Pta Chica y 1 Hueco",
         "sku": "M2504",
         "price": 32070.81
       },
       {
-        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004",
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004-retro",
         "name": "Mesa de Luz Flotante 1 Cajon",
         "sku": "M2508",
         "price": 22769.46
       },
       {
-        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005",
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005-retro",
+        "name": "Mesa de Luz Flotante Cajon y Hueco",
+        "sku": "M2509",
+        "price": 25598.8
+      }
+    ]
+  },
+  {
+    "id": "grp-mesa-de-luz-retro-nordica-40-x-60-x-30cm-nordico",
+    "name": "Mesa de Luz Nordico",
+    "open": true,
+    "products": [
+      {
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-001-nordico",
+        "name": "Mesa de Luz 1 Cajón y 1 Hueco",
+        "sku": "M2500",
+        "price": 30651.2
+      },
+      {
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-002-nordico",
+        "name": "Mesa de Luz Cajón y Pta",
+        "sku": "M2502",
+        "price": 34315.66
+      },
+      {
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-003-nordico",
+        "name": "Mesa de Luz 1 Pta Chica y 1 Hueco",
+        "sku": "M2504",
+        "price": 32070.81
+      },
+      {
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-004-nordico",
+        "name": "Mesa de Luz Flotante 1 Cajon",
+        "sku": "M2508",
+        "price": 22769.46
+      },
+      {
+        "id": "me-mesa-de-luz-retro-nordica-40-x-60-x-30cm-005-nordico",
         "name": "Mesa de Luz Flotante Cajon y Hueco",
         "sku": "M2509",
         "price": 25598.8
@@ -81,30 +118,61 @@ const MELAMINA_GROUPS = [
     ]
   },
   {
-    "id": "grp-escritorio-retro-nordico-40cm-prof",
-    "name": "Escritorio Retro / Nordico 40cm Prof",
+    "id": "grp-escritorio-retro-nordico-40cm-prof-retro",
+    "name": "Escritorio Retro 40cm Prof",
     "open": false,
     "products": [
       {
-        "id": "me-escritorio-retro-nordico-40cm-prof-001",
+        "id": "me-escritorio-retro-nordico-40cm-prof-001-retro",
         "name": "Escritorio 80cm x 40cm 1Caj y Hueco",
         "sku": "M2550",
         "price": 47762.05
       },
       {
-        "id": "me-escritorio-retro-nordico-40cm-prof-002",
+        "id": "me-escritorio-retro-nordico-40cm-prof-002-retro",
         "name": "Escritorio 80cm x 40cm 2 Cajones",
         "sku": "M2551",
         "price": 54209.9
       },
       {
-        "id": "me-escritorio-retro-nordico-40cm-prof-003",
+        "id": "me-escritorio-retro-nordico-40cm-prof-003-retro",
         "name": "Escritorio 100cm x 40cm 1 Cajón y hueco",
         "sku": "M2553",
         "price": 54927.41
       },
       {
-        "id": "me-escritorio-retro-nordico-40cm-prof-004",
+        "id": "me-escritorio-retro-nordico-40cm-prof-004-retro",
+        "name": "Escritorio 120cm x 40cm 2 Caj y Hueco",
+        "sku": "M2552",
+        "price": 61589.06
+      }
+    ]
+  },
+  {
+    "id": "grp-escritorio-retro-nordico-40cm-prof-nordico",
+    "name": "Escritorio Nordico Prof",
+    "open": false,
+    "products": [
+      {
+        "id": "me-escritorio-retro-nordico-40cm-prof-001-nordico",
+        "name": "Escritorio 80cm x 40cm 1Caj y Hueco",
+        "sku": "M2550",
+        "price": 47762.05
+      },
+      {
+        "id": "me-escritorio-retro-nordico-40cm-prof-002-nordico",
+        "name": "Escritorio 80cm x 40cm 2 Cajones",
+        "sku": "M2551",
+        "price": 54209.9
+      },
+      {
+        "id": "me-escritorio-retro-nordico-40cm-prof-003-nordico",
+        "name": "Escritorio 100cm x 40cm 1 Cajón y hueco",
+        "sku": "M2553",
+        "price": 54927.41
+      },
+      {
+        "id": "me-escritorio-retro-nordico-40cm-prof-004-nordico",
         "name": "Escritorio 120cm x 40cm 2 Caj y Hueco",
         "sku": "M2552",
         "price": 61589.06
@@ -211,30 +279,61 @@ const MELAMINA_GROUPS = [
     ]
   },
   {
-    "id": "grp-rack-lcd-retro-n-rdico-120-x-60-x-30-cm",
-    "name": "Rack LCD Retro/Nórdico 120 x 60 x 30 cm",
+    "id": "grp-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-retro",
+    "name": "Rack LCD Retro 120",
     "open": false,
     "products": [
       {
-        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-001",
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-001-retro",
         "name": "120 cm ECO",
         "sku": "M2524",
         "price": 50793.41
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-002",
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-002-retro",
         "name": "120 cm 2 Ptas Gdes 2 Huecos",
         "sku": "M2520",
         "price": 66389.72
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-003",
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-003-retro",
         "name": "120 cm 2 Cajones 2Ptas chicas 2 Huecos",
         "sku": "M2521",
         "price": 76013.72
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-004",
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-004-retro",
+        "name": "120 cm 4 huecos 2 Ptas chicas",
+        "sku": "M2522",
+        "price": 70568.43
+      }
+    ]
+  },
+  {
+    "id": "grp-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-nordico",
+    "name": "Rack LCD Nordico 120",
+    "open": false,
+    "products": [
+      {
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-001-nordico",
+        "name": "120 cm ECO",
+        "sku": "M2524",
+        "price": 50793.41
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-002-nordico",
+        "name": "120 cm 2 Ptas Gdes 2 Huecos",
+        "sku": "M2520",
+        "price": 66389.72
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-003-nordico",
+        "name": "120 cm 2 Cajones 2Ptas chicas 2 Huecos",
+        "sku": "M2521",
+        "price": 76013.72
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-120-x-60-x-30-cm-004-nordico",
         "name": "120 cm 4 huecos 2 Ptas chicas",
         "sku": "M2522",
         "price": 70568.43
@@ -285,30 +384,61 @@ const MELAMINA_GROUPS = [
     ]
   },
   {
-    "id": "grp-rack-lcd-retro-n-rdico-150-x-60-x-30-cm",
-    "name": "Rack LCD Retro/Nórdico 150 x 60 x 30 cm",
+    "id": "grp-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-retro",
+    "name": "Rack LCD Retro 150",
     "open": false,
     "products": [
       {
-        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-001",
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-001-retro",
         "name": "150 cm ECO",
         "sku": "M2534",
         "price": 57186.38
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-002",
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-002-retro",
         "name": "150 cm 2 Ptas Gdes 2 Huecos (Por Pedido)",
         "sku": "M2530",
         "price": 74749.52
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-003",
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-003-retro",
         "name": "150 cm 2 Cajones 2Ptas chicas 2 Huecos",
         "sku": "M2531",
         "price": 84355.9
       },
       {
-        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-004",
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-004-retro",
+        "name": "150 cm 4 huecos 2 Ptas chicas",
+        "sku": "M2532",
+        "price": 79543.28
+      }
+    ]
+  },
+  {
+    "id": "grp-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-nordico",
+    "name": "Rack LCD Nordico 150",
+    "open": false,
+    "products": [
+      {
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-001-nordico",
+        "name": "150 cm ECO",
+        "sku": "M2534",
+        "price": 57186.38
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-002-nordico",
+        "name": "150 cm 2 Ptas Gdes 2 Huecos (Por Pedido)",
+        "sku": "M2530",
+        "price": 74749.52
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-003-nordico",
+        "name": "150 cm 2 Cajones 2Ptas chicas 2 Huecos",
+        "sku": "M2531",
+        "price": 84355.9
+      },
+      {
+        "id": "me-rack-lcd-retro-n-rdico-150-x-60-x-30-cm-004-nordico",
         "name": "150 cm 4 huecos 2 Ptas chicas",
         "sku": "M2532",
         "price": 79543.28

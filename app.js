@@ -1,32 +1,6 @@
-﻿const WHATSAPP_NUMBER = "5491112345678";
+﻿const WHATSAPP_NUMBER = "5491159339958";
 
 const catalog = [
-  {
-    id: "fibrofacil",
-    name: "Fibrofacil",
-    icon: "layers",
-    groups: [
-      {
-        id: "mdf3",
-        name: "MDF 3mm",
-        open: true,
-        products: [
-          { id: "ff-001", name: "Box con Tapa 20x20", sku: "FF-001", price: 45 },
-          { id: "ff-002", name: "Organizador Chico", sku: "FF-002", price: 32.5 },
-          { id: "ff-003", name: "Bandeja Simple", sku: "FF-003", price: 28 },
-        ],
-      },
-      {
-        id: "mdf5",
-        name: "MDF 5mm",
-        open: false,
-        products: [
-          { id: "ff-101", name: "Caja de TÃ© x6", sku: "FF-101", price: 60 },
-          { id: "ff-102", name: "Caja de TÃ© x9", sku: "FF-102", price: 78 },
-        ],
-      },
-    ],
-  },
   {
     id: "melamina",
     name: "Melamina",
@@ -40,26 +14,23 @@ const catalog = [
     groups: PINO_GROUPS,
   },
   {
-    id: "otro",
-    name: "Otro",
-    icon: "more_horiz",
-    groups: [
-      {
-        id: "varios",
-        name: "Varios",
-        open: true,
-        products: [
-          { id: "ot-001", name: "Herraje Kit BÃ¡sico", sku: "OT-001", price: 42 },
-          { id: "ot-002", name: "Bisagra Pack x10", sku: "OT-002", price: 70 },
-        ],
-      },
-    ],
+    id: "fibrofacil",
+    name: "Fibrofacil",
+    icon: "layers",
+    groups: FIBROFACIL_GROUPS,
   },
 ];
+
+for (const category of catalog) {
+  for (const group of category.groups) {
+    group.open = false;
+  }
+}
 
 const quantities = {};
 let activeCategory = catalog[0].id;
 let searchTerm = "";
+let summaryOpen = false;
 
 const html = {
   root: document.documentElement,
@@ -67,12 +38,12 @@ const html = {
   groups: document.getElementById("groups-container"),
   search: document.getElementById("search-input"),
   empty: document.getElementById("empty-state"),
-  summaryItems: document.getElementById("summary-items"),
   summaryTotal: document.getElementById("summary-total"),
+  summaryToggle: document.getElementById("summary-toggle"),
+  summaryChevron: document.getElementById("summary-chevron"),
+  summaryDetailsPanel: document.getElementById("summary-details-panel"),
+  summaryDetailsList: document.getElementById("summary-details-list"),
   sendButton: document.getElementById("send-whatsapp"),
-  resetButton: document.getElementById("btn-reset"),
-  themeButton: document.getElementById("btn-theme"),
-  clientName: document.getElementById("client-name"),
 };
 
 function formatMoney(value) {
@@ -222,21 +193,43 @@ function summary() {
 
 function renderSummary() {
   const data = summary();
-  const label = data.totalItems === 1 ? "Producto" : "Productos";
-  html.summaryItems.textContent = `${data.totalItems} ${label}`;
   html.summaryTotal.textContent = formatMoney(data.totalPrice);
   html.sendButton.disabled = data.totalItems === 0;
+
+  if (data.selected.length === 0) {
+    html.summaryDetailsList.innerHTML =
+      '<p class="p-4 text-sm text-slate-500">Todavia no agregaste productos.</p>';
+    summaryOpen = false;
+  } else {
+    html.summaryDetailsList.innerHTML = data.selected
+      .map((item) => {
+        const subtotal = item.qty * item.product.price;
+        return `
+        <div class="p-4 flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${item.product.name}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">${item.category} · ${item.group}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-sm font-bold">x${item.qty}</p>
+            <p class="text-xs text-primary font-semibold">${formatMoney(subtotal)}</p>
+          </div>
+        </div>`;
+      })
+      .join("");
+  }
+
+  html.summaryDetailsPanel.classList.toggle("hidden", !summaryOpen);
+  html.summaryChevron.style.transform = summaryOpen ? "rotate(0deg)" : "rotate(180deg)";
 }
 
 function buildWhatsAppText() {
   const data = summary();
   const lines = [];
-  const client = html.clientName.value.trim();
   const today = new Date().toLocaleString("es-AR");
 
   lines.push("Hola, quiero hacer este pedido:");
   lines.push("");
-  if (client) lines.push(`Cliente: ${client}`);
   lines.push(`Fecha: ${today}`);
   lines.push("");
 
@@ -264,7 +257,6 @@ function sendToWhatsApp() {
 
 function clearOrder() {
   Object.keys(quantities).forEach((key) => delete quantities[key]);
-  html.clientName.value = "";
   render();
 }
 
@@ -299,9 +291,12 @@ function bindEvents() {
     renderGroups();
   });
 
+  html.summaryToggle.addEventListener("click", () => {
+    summaryOpen = !summaryOpen;
+    renderSummary();
+  });
+
   html.sendButton.addEventListener("click", sendToWhatsApp);
-  html.resetButton.addEventListener("click", clearOrder);
-  html.themeButton.addEventListener("click", toggleTheme);
 }
 
 function render() {
@@ -312,3 +307,4 @@ function render() {
 
 bindEvents();
 render();
+
