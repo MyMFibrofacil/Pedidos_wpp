@@ -31,6 +31,7 @@ const quantities = {};
 let activeCategory = catalog[0].id;
 let searchTerm = "";
 let summaryOpen = false;
+let selectedIva = 0;
 
 const html = {
   root: document.documentElement,
@@ -44,6 +45,7 @@ const html = {
   summaryDetailsPanel: document.getElementById("summary-details-panel"),
   summaryDetailsList: document.getElementById("summary-details-list"),
   sendButton: document.getElementById("send-whatsapp"),
+  ivaOptions: document.getElementById("iva-options"),
 };
 
 function formatMoney(value) {
@@ -182,13 +184,18 @@ function summary() {
   });
 
   let totalItems = 0;
-  let totalPrice = 0;
+  let subtotal = 0;
+  let ivaAmount = 0;
   selected.forEach((item) => {
     totalItems += item.qty;
-    totalPrice += item.qty * item.product.price;
+    const lineSubtotal = item.qty * item.product.price;
+    const lineIvaRate = item.category === "Fibrofacil" ? Math.max(selectedIva, 7) : selectedIva;
+    const lineIva = lineSubtotal * (lineIvaRate / 100);
+    subtotal += lineSubtotal;
+    ivaAmount += lineIva;
   });
 
-  return { selected, totalItems, totalPrice };
+  return { selected, totalItems, subtotal, ivaAmount, totalPrice: subtotal + ivaAmount };
 }
 
 function renderSummary() {
@@ -200,27 +207,59 @@ function renderSummary() {
     html.summaryDetailsList.innerHTML =
       '<p class="p-4 text-sm text-slate-500">Todavia no agregaste productos.</p>';
     summaryOpen = false;
-  } else {
-    html.summaryDetailsList.innerHTML = data.selected
-      .map((item) => {
-        const subtotal = item.qty * item.product.price;
-        return `
-        <div class="p-4 flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${item.product.name}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400">${item.category} · ${item.group}</p>
-          </div>
-          <div class="text-right shrink-0">
-            <p class="text-sm font-bold">x${item.qty}</p>
-            <p class="text-xs text-primary font-semibold">${formatMoney(subtotal)}</p>
-          </div>
-        </div>`;
-      })
-      .join("");
-  }
+    } else {
+      html.summaryDetailsList.innerHTML = data.selected
+        .map((item) => {
+          const subtotal = item.qty * item.product.price;
+          return `
+          <div class="p-4 flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${item.product.name}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">${item.category} · ${item.group}</p>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mb-1">
+                <button
+                  data-summary-action="minus"
+                  data-summary-product="${item.product.id}"
+                  class="size-7 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary"
+                >
+                  <span class="material-symbols-outlined text-base">remove</span>
+                </button>
+                <span class="w-8 text-center font-bold text-sm dark:text-slate-100">${item.qty}</span>
+                <button
+                  data-summary-action="plus"
+                  data-summary-product="${item.product.id}"
+                  class="size-7 flex items-center justify-center rounded-md bg-primary text-white shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-base">add</span>
+                </button>
+              </div>
+              <p class="text-xs text-primary font-semibold">${formatMoney(subtotal)}</p>
+            </div>
+          </div>`;
+        })
+        .join("");
+    }
 
   html.summaryDetailsPanel.classList.toggle("hidden", !summaryOpen);
   html.summaryChevron.style.transform = summaryOpen ? "rotate(0deg)" : "rotate(180deg)";
+  renderIvaOptions();
+}
+
+function renderIvaOptions() {
+  const buttons = html.ivaOptions.querySelectorAll("[data-iva]");
+  buttons.forEach((btn) => {
+    const value = Number(btn.dataset.iva || 0);
+    const active = value === selectedIva;
+    btn.classList.toggle("bg-primary", active);
+    btn.classList.toggle("text-white", active);
+    btn.classList.toggle("border-primary", active);
+    btn.classList.toggle("bg-white", !active);
+    btn.classList.toggle("dark:bg-slate-800", !active);
+    btn.classList.toggle("text-slate-700", !active);
+    btn.classList.toggle("dark:text-slate-200", !active);
+  });
 }
 
 function buildWhatsAppText() {
@@ -234,15 +273,12 @@ function buildWhatsAppText() {
   lines.push("");
 
   data.selected.forEach((item) => {
-    const subtotal = item.qty * item.product.price;
-    lines.push(
-      `- ${item.qty} x ${item.product.name} (${item.product.sku}) | ${item.group} | ${formatMoney(
-        subtotal
-      )}`
-    );
+    lines.push(`* ${item.qty} x ${item.product.name}`);
   });
 
   lines.push("");
+  lines.push(`Subtotal: ${formatMoney(data.subtotal)}`);
+  lines.push(`IVA: ${formatMoney(data.ivaAmount)}`);
   lines.push(`Total unidades: ${data.totalItems}`);
   lines.push(`Total estimado: ${formatMoney(data.totalPrice)}`);
 
@@ -293,6 +329,22 @@ function bindEvents() {
 
   html.summaryToggle.addEventListener("click", () => {
     summaryOpen = !summaryOpen;
+    renderSummary();
+  });
+
+  html.summaryDetailsList.addEventListener("click", (e) => {
+    const button = e.target.closest("[data-summary-action][data-summary-product]");
+    if (!button) return;
+    const productId = button.dataset.summaryProduct;
+    const delta = button.dataset.summaryAction === "plus" ? 1 : -1;
+    updateQty(productId, delta);
+    if (summary().totalItems > 0) summaryOpen = true;
+  });
+
+  html.ivaOptions.addEventListener("click", (e) => {
+    const button = e.target.closest("[data-iva]");
+    if (!button) return;
+    selectedIva = Number(button.dataset.iva || 0);
     renderSummary();
   });
 
