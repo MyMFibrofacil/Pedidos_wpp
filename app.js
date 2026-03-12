@@ -94,18 +94,9 @@ function setGroupsMessage(message) {
   html.groups.innerHTML = `<p class="text-sm text-slate-500">${escapeHtml(message)}</p>`;
 }
 
-function isMobileViewport() {
-  return window.matchMedia("(max-width: 767px)").matches;
-}
-
 function updateScrollButtonVisibility() {
   if (!html.scrollToBottom || !html.catalogScroll) return;
-  if (!isMobileViewport()) {
-    html.scrollToBottom.classList.remove("hidden");
-    return;
-  }
-  const remaining = html.catalogScroll.scrollHeight - html.catalogScroll.scrollTop - html.catalogScroll.clientHeight;
-  html.scrollToBottom.classList.toggle("hidden", remaining < 24);
+  html.scrollToBottom.classList.remove("hidden");
 }
 
 function getActiveCategory() {
