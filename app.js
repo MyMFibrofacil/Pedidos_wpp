@@ -97,6 +97,8 @@ function setGroupsMessage(message) {
 function updateScrollButtonVisibility() {
   if (!html.scrollToBottom || !html.catalogScroll) return;
   html.scrollToBottom.classList.remove("hidden");
+  html.scrollToBottom.style.display = "flex";
+  html.scrollToBottom.style.visibility = "visible";
 }
 
 function getActiveCategory() {
