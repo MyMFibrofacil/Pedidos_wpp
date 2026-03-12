@@ -1,34 +1,10 @@
 ﻿const WHATSAPP_NUMBER = "5491159339958";
+const SHEET_ID = "15-MwPmN2j1vtM1xB-RFcRd_2UI74A2kHcfx-hPuAMdw";
+const SHEET_GID = "0";
 
-const catalog = [
-  {
-    id: "melamina",
-    name: "Melamina",
-    icon: "grid_view",
-    groups: MELAMINA_GROUPS,
-  },
-  {
-    id: "pino",
-    name: "Pino",
-    icon: "forest",
-    groups: PINO_GROUPS,
-  },
-  {
-    id: "fibrofacil",
-    name: "Fibrofacil",
-    icon: "layers",
-    groups: FIBROFACIL_GROUPS,
-  },
-];
-
-for (const category of catalog) {
-  for (const group of category.groups) {
-    group.open = false;
-  }
-}
-
+let catalog = [];
 const quantities = {};
-let activeCategory = catalog[0].id;
+let activeCategory = "";
 let searchTerm = "";
 let summaryOpen = false;
 let selectedIva = 0;
@@ -48,11 +24,72 @@ const html = {
   ivaOptions: document.getElementById("iva-options"),
 };
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function slugify(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function parsePrice(raw) {
+  if (typeof raw === "number") return raw;
+  const text = String(raw || "").trim();
+  if (!text) return NaN;
+
+  const cleaned = text.replace(/[^\d.,-]/g, "");
+  let normalized = cleaned;
+
+  if (cleaned.includes(",") && cleaned.includes(".")) {
+    normalized =
+      cleaned.lastIndexOf(",") > cleaned.lastIndexOf(".")
+        ? cleaned.replace(/\./g, "").replace(",", ".")
+        : cleaned.replace(/,/g, "");
+  } else if (cleaned.includes(",")) {
+    normalized = /,\d{1,2}$/.test(cleaned)
+      ? cleaned.replace(/\./g, "").replace(",", ".")
+      : cleaned.replace(/,/g, "");
+  } else if (cleaned.includes(".")) {
+    normalized = /\.\d{1,2}$/.test(cleaned)
+      ? cleaned.replace(/,/g, "")
+      : cleaned.replace(/\./g, "");
+  }
+
+  const value = Number(normalized);
+  return Number.isFinite(value) ? value : NaN;
+}
+
+function iconForMaterial(materialName) {
+  const value = slugify(materialName);
+  if (value.includes("pino")) return "forest";
+  if (value.includes("melamina")) return "grid_view";
+  if (value.includes("fibrofacil")) return "layers";
+  return "inventory_2";
+}
+
+function isFibrofacilCategory(name) {
+  return slugify(name) === "fibrofacil";
+}
+
 function formatMoney(value) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
   }).format(value);
+}
+
+function setGroupsMessage(message) {
+  html.groups.innerHTML = `<p class="text-sm text-slate-500">${escapeHtml(message)}</p>`;
 }
 
 function getActiveCategory() {
@@ -75,6 +112,7 @@ function updateQty(productId, delta) {
 
 function toggleGroup(groupId) {
   const category = getActiveCategory();
+  if (!category) return;
   const target = category.groups.find((g) => g.id === groupId);
   if (!target) return;
   target.open = !target.open;
@@ -82,18 +120,23 @@ function toggleGroup(groupId) {
 }
 
 function renderTabs() {
+  if (catalog.length === 0) {
+    html.tabs.innerHTML = "";
+    return;
+  }
+
   html.tabs.innerHTML = catalog
     .map((cat) => {
       const active = cat.id === activeCategory;
       return `
       <button
-        data-cat="${cat.id}"
+        data-cat="${escapeHtml(cat.id)}"
         class="flex flex-col items-center min-w-[88px] justify-center border-b-[3px] ${
           active ? "border-primary text-primary" : "border-transparent text-slate-500 dark:text-slate-400"
         } gap-1 pb-2 pt-3"
       >
-        <span class="material-symbols-outlined">${cat.icon}</span>
-        <p class="text-xs ${active ? "font-bold" : "font-medium"} whitespace-nowrap">${cat.name}</p>
+        <span class="material-symbols-outlined">${escapeHtml(cat.icon)}</span>
+        <p class="text-xs ${active ? "font-bold" : "font-medium"} whitespace-nowrap">${escapeHtml(cat.name)}</p>
       </button>`;
     })
     .join("");
@@ -106,56 +149,89 @@ function filteredProducts(group) {
     return (
       p.name.toLowerCase().includes(term) ||
       p.sku.toLowerCase().includes(term) ||
-      group.name.toLowerCase().includes(term)
+      group.name.toLowerCase().includes(term) ||
+      p.subcategory.toLowerCase().includes(term)
     );
   });
 }
 
+function renderProductRow(product) {
+  const qty = getProductQty(product.id);
+  return `
+    <div class="p-4 flex items-center justify-between gap-4">
+      <div class="flex-1 min-w-0">
+        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${escapeHtml(product.name)}</h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400">SKU: ${escapeHtml(product.sku || "-")}</p>
+        <p class="text-primary font-bold mt-1">${formatMoney(product.price)}</p>
+      </div>
+      <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+        <button data-action="minus" data-product="${escapeHtml(product.id)}" class="size-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">
+          <span class="material-symbols-outlined text-lg">remove</span>
+        </button>
+        <span class="w-10 text-center font-bold text-sm dark:text-slate-100">${qty}</span>
+        <button data-action="plus" data-product="${escapeHtml(product.id)}" class="size-8 flex items-center justify-center rounded-md ${
+          qty > 0 ? "bg-primary text-white" : "bg-white dark:bg-slate-700 text-primary"
+        } shadow-sm">
+          <span class="material-symbols-outlined text-lg">add</span>
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderProductsWithSubcategories(products) {
+  const hasSubcategories = products.some((product) => product.subcategory);
+  if (!hasSubcategories) {
+    return products.map(renderProductRow).join("");
+  }
+
+  const buckets = new Map();
+  products.forEach((product) => {
+    const key = product.subcategory || "";
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(product);
+  });
+
+  return Array.from(buckets.entries())
+    .map(([subcategory, items]) => {
+      const rows = items.map(renderProductRow).join("");
+      if (!subcategory) return rows;
+      return `
+        <div>
+          <div class="px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 bg-slate-50 dark:bg-slate-800/60 dark:text-slate-300">${escapeHtml(
+            subcategory
+          )}</div>
+          ${rows}
+        </div>`;
+    })
+    .join("");
+}
+
 function renderGroups() {
   const category = getActiveCategory();
+  if (!category) {
+    html.groups.innerHTML = "";
+    html.empty.classList.add("hidden");
+    return;
+  }
+
   const blocks = [];
 
   category.groups.forEach((group) => {
     const products = filteredProducts(group);
     if (searchTerm && products.length === 0) return;
 
-    const productsHtml = group.open
-      ? products
-          .map((p) => {
-            const qty = getProductQty(p.id);
-            return `
-            <div class="p-4 flex items-center justify-between gap-4">
-              <div class="flex-1 min-w-0">
-                <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${p.name}</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400">SKU: ${p.sku}</p>
-                <p class="text-primary font-bold mt-1">${formatMoney(p.price)}</p>
-              </div>
-              <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
-                <button data-action="minus" data-product="${p.id}" class="size-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">
-                  <span class="material-symbols-outlined text-lg">remove</span>
-                </button>
-                <span class="w-10 text-center font-bold text-sm dark:text-slate-100">${qty}</span>
-                <button data-action="plus" data-product="${p.id}" class="size-8 flex items-center justify-center rounded-md ${
-                  qty > 0 ? "bg-primary text-white" : "bg-white dark:bg-slate-700 text-primary"
-                } shadow-sm">
-                  <span class="material-symbols-outlined text-lg">add</span>
-                </button>
-              </div>
-            </div>`;
-          })
-          .join("")
-      : "";
+    const productsHtml = group.open ? renderProductsWithSubcategories(products) : "";
 
     blocks.push(`
       <section class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-        <button data-group="${group.id}" class="w-full flex items-center justify-between p-4 ${
-          group.open ? "bg-primary/5" : ""
-        }">
+        <button data-group="${escapeHtml(group.id)}" class="w-full flex items-center justify-between p-4 ${
+      group.open ? "bg-primary/5" : ""
+    }">
           <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-primary">${
               group.open ? "folder_open" : "folder"
             }</span>
-            <span class="font-bold text-slate-800 dark:text-slate-100">${group.name}</span>
+            <span class="font-bold text-slate-800 dark:text-slate-100">${escapeHtml(group.name)}</span>
           </div>
           <span class="material-symbols-outlined text-slate-400">${
             group.open ? "expand_more" : "chevron_right"
@@ -189,7 +265,7 @@ function summary() {
   selected.forEach((item) => {
     totalItems += item.qty;
     const lineSubtotal = item.qty * item.product.price;
-    const lineIvaRate = item.category === "Fibrofacil" ? Math.max(selectedIva, 7) : selectedIva;
+    const lineIvaRate = isFibrofacilCategory(item.category) ? Math.max(selectedIva, 7) : selectedIva;
     const lineIva = lineSubtotal * (lineIvaRate / 100);
     subtotal += lineSubtotal;
     ivaAmount += lineIva;
@@ -207,21 +283,23 @@ function renderSummary() {
     html.summaryDetailsList.innerHTML =
       '<p class="p-4 text-sm text-slate-500">Todavia no agregaste productos.</p>';
     summaryOpen = false;
-    } else {
-      html.summaryDetailsList.innerHTML = data.selected
-        .map((item) => {
-          const subtotal = item.qty * item.product.price;
-          return `
+  } else {
+    html.summaryDetailsList.innerHTML = data.selected
+      .map((item) => {
+        const subtotal = item.qty * item.product.price;
+        return `
           <div class="p-4 flex items-start justify-between gap-3">
             <div class="min-w-0">
-              <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${item.product.name}</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400">${item.category} · ${item.group}</p>
+              <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">${escapeHtml(item.product.name)}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">${escapeHtml(item.category)} · ${escapeHtml(
+          item.group
+        )}</p>
             </div>
             <div class="text-right shrink-0">
               <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mb-1">
                 <button
                   data-summary-action="minus"
-                  data-summary-product="${item.product.id}"
+                  data-summary-product="${escapeHtml(item.product.id)}"
                   class="size-7 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary"
                 >
                   <span class="material-symbols-outlined text-base">remove</span>
@@ -229,7 +307,7 @@ function renderSummary() {
                 <span class="w-8 text-center font-bold text-sm dark:text-slate-100">${item.qty}</span>
                 <button
                   data-summary-action="plus"
-                  data-summary-product="${item.product.id}"
+                  data-summary-product="${escapeHtml(item.product.id)}"
                   class="size-7 flex items-center justify-center rounded-md bg-primary text-white shadow-sm"
                 >
                   <span class="material-symbols-outlined text-base">add</span>
@@ -238,9 +316,9 @@ function renderSummary() {
               <p class="text-xs text-primary font-semibold">${formatMoney(subtotal)}</p>
             </div>
           </div>`;
-        })
-        .join("");
-    }
+      })
+      .join("");
+  }
 
   html.summaryDetailsPanel.classList.toggle("hidden", !summaryOpen);
   html.summaryChevron.style.transform = summaryOpen ? "rotate(0deg)" : "rotate(180deg)";
@@ -357,6 +435,164 @@ function render() {
   renderSummary();
 }
 
-bindEvents();
-render();
+async function loadCatalogFromSheet() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
 
+  const parseSheetResponseText = (rawText) => {
+    const match = rawText.match(/google\.visualization\.Query\.setResponse\((.*)\);?\s*$/s);
+    if (!match) {
+      throw new Error("Formato de respuesta de Google Sheets no reconocido");
+    }
+    return JSON.parse(match[1]);
+  };
+
+  const loadWithFetch = async () => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`No se pudo leer la hoja (${response.status})`);
+    }
+    return parseSheetResponseText(await response.text());
+  };
+
+  const loadWithScript = () =>
+    new Promise((resolve, reject) => {
+      const previousGoogle = window.google;
+      const previousSetResponse = window.google?.visualization?.Query?.setResponse;
+      let settled = false;
+
+      const cleanup = (scriptNode) => {
+        if (scriptNode?.parentNode) scriptNode.parentNode.removeChild(scriptNode);
+        if (window.google?.visualization?.Query) {
+          window.google.visualization.Query.setResponse = previousSetResponse;
+        }
+      };
+
+      window.google = window.google || {};
+      window.google.visualization = window.google.visualization || {};
+      window.google.visualization.Query = window.google.visualization.Query || {};
+      window.google.visualization.Query.setResponse = (payload) => {
+        if (settled) return;
+        settled = true;
+        cleanup(script);
+        resolve(payload);
+      };
+
+      const script = document.createElement("script");
+      script.src = `${url}&_ts=${Date.now()}`;
+      script.async = true;
+      script.onerror = () => {
+        if (settled) return;
+        settled = true;
+        cleanup(script);
+        if (!previousGoogle) delete window.google;
+        reject(new Error("No se pudo cargar la hoja por script"));
+      };
+
+      document.head.appendChild(script);
+
+      setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        cleanup(script);
+        if (!previousGoogle) delete window.google;
+        reject(new Error("Tiempo de espera agotado al cargar la hoja"));
+      }, 12000);
+    });
+
+  let data;
+  try {
+    data = await loadWithFetch();
+  } catch (_fetchError) {
+    data = await loadWithScript();
+  }
+
+  const cols = data?.table?.cols || [];
+  const rows = data?.table?.rows || [];
+
+  const indexes = Object.fromEntries(cols.map((col, i) => [col.label, i]));
+  const getRaw = (cells, label) => {
+    const index = indexes[label];
+    if (index === undefined) return "";
+    const cell = cells[index];
+    if (!cell || cell.v === null || cell.v === undefined) return "";
+    return cell.v;
+  };
+
+  const materials = new Map();
+
+  rows.forEach((row, rowIndex) => {
+    const cells = row.c || [];
+    const active = String(getRaw(cells, "activo") || "").trim().toLowerCase();
+    if (active && active !== "si") return;
+
+    const material = String(getRaw(cells, "lista_precio_1") || "").trim();
+    const categoryName = String(getRaw(cells, "categoria") || "").trim();
+    const subcategoryName = String(getRaw(cells, "subcategoria") || "").trim();
+    const productName = String(getRaw(cells, "nombre_ia") || "").trim();
+    const sku = String(getRaw(cells, "codigo") || "").trim();
+    const price = parsePrice(getRaw(cells, "precio"));
+
+    if (!material || !categoryName || !productName || !Number.isFinite(price)) return;
+
+    const materialId = `mat-${slugify(material)}`;
+    const groupId = `grp-${materialId}-${slugify(categoryName)}`;
+
+    if (!materials.has(materialId)) {
+      materials.set(materialId, {
+        id: materialId,
+        name: material,
+        icon: iconForMaterial(material),
+        groupsMap: new Map(),
+      });
+    }
+
+    const materialEntry = materials.get(materialId);
+    if (!materialEntry.groupsMap.has(groupId)) {
+      materialEntry.groupsMap.set(groupId, {
+        id: groupId,
+        name: categoryName,
+        open: false,
+        products: [],
+      });
+    }
+
+    materialEntry.groupsMap.get(groupId).products.push({
+      id: `prd-${materialId}-${groupId}-${sku || slugify(productName)}-${rowIndex}`,
+      name: productName,
+      sku,
+      price,
+      subcategory: subcategoryName,
+    });
+  });
+
+  return Array.from(materials.values()).map((material) => ({
+    id: material.id,
+    name: material.name,
+    icon: material.icon,
+    groups: Array.from(material.groupsMap.values()),
+  }));
+}
+
+async function init() {
+  bindEvents();
+  setGroupsMessage("Cargando productos...");
+
+  try {
+    catalog = await loadCatalogFromSheet();
+    if (!catalog.length) {
+      setGroupsMessage("No hay productos disponibles en la hoja.");
+      html.sendButton.disabled = true;
+      return;
+    }
+
+    activeCategory = catalog[0].id;
+    render();
+  } catch (error) {
+    console.error(error);
+    const detail = error instanceof Error ? error.message : "Error desconocido";
+    setGroupsMessage(`No se pudieron cargar los productos desde Google Sheets. (${detail})`);
+    html.sendButton.disabled = true;
+  }
+}
+
+init();
