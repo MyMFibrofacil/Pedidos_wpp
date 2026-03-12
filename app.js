@@ -10,6 +10,8 @@ let summaryOpen = false;
 let selectedIva = 0;
 let scrollButtonTimer = null;
 const SCROLL_BUTTON_IDLE_MS = 1400;
+const SUBCATEGORY_NONE_KEY = "__sin_subcategoria__";
+const textCollator = new Intl.Collator("es", { sensitivity: "base", numeric: true });
 
 const html = {
   root: document.documentElement,
@@ -92,6 +94,10 @@ function formatMoney(value) {
   }).format(value);
 }
 
+function compareText(a, b) {
+  return textCollator.compare(String(a || ""), String(b || ""));
+}
+
 function setGroupsMessage(message) {
   html.groups.innerHTML = `<p class="text-sm text-slate-500">${escapeHtml(message)}</p>`;
 }
@@ -158,6 +164,17 @@ function toggleGroup(groupId) {
   renderGroups();
 }
 
+function toggleSubcategory(groupId, subcategoryKey) {
+  const category = getActiveCategory();
+  if (!category) return;
+  const targetGroup = category.groups.find((g) => g.id === groupId);
+  if (!targetGroup) return;
+  targetGroup.subOpen = targetGroup.subOpen || {};
+  const current = targetGroup.subOpen[subcategoryKey];
+  targetGroup.subOpen[subcategoryKey] = current === undefined ? false : !current;
+  renderGroups();
+}
+
 function renderTabs() {
   if (catalog.length === 0) {
     html.tabs.innerHTML = "";
@@ -217,29 +234,49 @@ function renderProductRow(product) {
     </div>`;
 }
 
-function renderProductsWithSubcategories(products) {
+function renderProductsWithSubcategories(group, products) {
   const hasSubcategories = products.some((product) => product.subcategory);
   if (!hasSubcategories) {
     return products.map(renderProductRow).join("");
   }
 
+  group.subOpen = group.subOpen || {};
   const buckets = new Map();
   products.forEach((product) => {
-    const key = product.subcategory || "";
+    const key = product.subcategory || SUBCATEGORY_NONE_KEY;
     if (!buckets.has(key)) buckets.set(key, []);
     buckets.get(key).push(product);
   });
 
   return Array.from(buckets.entries())
-    .map(([subcategory, items]) => {
+    .sort(([keyA], [keyB]) => {
+      if (keyA === SUBCATEGORY_NONE_KEY) return -1;
+      if (keyB === SUBCATEGORY_NONE_KEY) return 1;
+      return compareText(keyA, keyB);
+    })
+    .map(([subcategoryKey, items]) => {
+      const subcategoryName =
+        subcategoryKey === SUBCATEGORY_NONE_KEY ? "" : subcategoryKey;
       const rows = items.map(renderProductRow).join("");
-      if (!subcategory) return rows;
+      if (!subcategoryName) return rows;
+      const isOpen =
+        searchTerm.length > 0
+          ? true
+          : group.subOpen[subcategoryKey] === undefined
+          ? false
+          : group.subOpen[subcategoryKey];
       return `
         <div>
-          <div class="px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 bg-slate-50 dark:bg-slate-800/60 dark:text-slate-300">${escapeHtml(
-            subcategory
-          )}</div>
-          ${rows}
+          <button
+            data-subgroup="${escapeHtml(group.id)}"
+            data-subgroup-key="${escapeHtml(subcategoryKey)}"
+            class="w-full px-4 py-2 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-500 bg-slate-50 dark:bg-slate-800/60 dark:text-slate-300"
+            type="button"
+          >
+            <span>${escapeHtml(subcategoryName)}</span>
+            <span class="material-symbols-outlined text-base">${isOpen ? "expand_more" : "chevron_right"}</span>
+          </button>
+          ${isOpen ? rows : ""}
         </div>`;
     })
     .join("");
@@ -259,7 +296,7 @@ function renderGroups() {
     const products = filteredProducts(group);
     if (searchTerm && products.length === 0) return;
 
-    const productsHtml = group.open ? renderProductsWithSubcategories(products) : "";
+    const productsHtml = group.open ? renderProductsWithSubcategories(group, products) : "";
 
     blocks.push(`
       <section class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
@@ -390,7 +427,8 @@ function buildWhatsAppText() {
   lines.push("");
 
   data.selected.forEach((item) => {
-    lines.push(`* ${item.qty} x ${item.product.name}`);
+    const codeLabel = item.product.sku ? ` (#${item.product.sku})` : "";
+    lines.push(`* ${item.qty} x ${item.product.name}${codeLabel}`);
   });
 
   lines.push("");
@@ -429,6 +467,12 @@ function bindEvents() {
     const groupButton = e.target.closest("[data-group]");
     if (groupButton) {
       toggleGroup(groupButton.dataset.group);
+      return;
+    }
+
+    const subGroupButton = e.target.closest("[data-subgroup][data-subgroup-key]");
+    if (subGroupButton) {
+      toggleSubcategory(subGroupButton.dataset.subgroup, subGroupButton.dataset.subgroupKey);
       return;
     }
 
@@ -634,12 +678,16 @@ async function loadCatalogFromSheet() {
     });
   });
 
-  return Array.from(materials.values()).map((material) => ({
-    id: material.id,
-    name: material.name,
-    icon: material.icon,
-    groups: Array.from(material.groupsMap.values()),
-  }));
+  return Array.from(materials.values())
+    .sort((a, b) => compareText(a.name, b.name))
+    .map((material) => ({
+      id: material.id,
+      name: material.name,
+      icon: material.icon,
+      groups: Array.from(material.groupsMap.values()).sort((a, b) =>
+        compareText(a.name, b.name)
+      ),
+    }));
 }
 
 async function init() {
