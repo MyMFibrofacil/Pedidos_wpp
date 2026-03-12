@@ -13,6 +13,8 @@ const html = {
   root: document.documentElement,
   tabs: document.getElementById("category-tabs"),
   groups: document.getElementById("groups-container"),
+  catalogScroll: document.getElementById("catalog-scroll"),
+  scrollToBottom: document.getElementById("scroll-to-bottom"),
   search: document.getElementById("search-input"),
   empty: document.getElementById("empty-state"),
   summaryTotal: document.getElementById("summary-total"),
@@ -90,6 +92,20 @@ function formatMoney(value) {
 
 function setGroupsMessage(message) {
   html.groups.innerHTML = `<p class="text-sm text-slate-500">${escapeHtml(message)}</p>`;
+}
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 767px)").matches;
+}
+
+function updateScrollButtonVisibility() {
+  if (!html.scrollToBottom || !html.catalogScroll) return;
+  if (!isMobileViewport()) {
+    html.scrollToBottom.classList.remove("hidden");
+    return;
+  }
+  const remaining = html.catalogScroll.scrollHeight - html.catalogScroll.scrollTop - html.catalogScroll.clientHeight;
+  html.scrollToBottom.classList.toggle("hidden", remaining < 24);
 }
 
 function getActiveCategory() {
@@ -427,12 +443,35 @@ function bindEvents() {
   });
 
   html.sendButton.addEventListener("click", sendToWhatsApp);
+
+  if (html.scrollToBottom && html.catalogScroll) {
+    html.scrollToBottom.addEventListener("click", () => {
+      html.catalogScroll.scrollTo({
+        top: html.catalogScroll.scrollHeight,
+        behavior: "smooth",
+      });
+
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+
+      if (html.sendButton) {
+        html.sendButton.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+    });
+
+    html.catalogScroll.addEventListener("scroll", updateScrollButtonVisibility, { passive: true });
+    window.addEventListener("resize", updateScrollButtonVisibility, { passive: true });
+    updateScrollButtonVisibility();
+  }
 }
 
 function render() {
   renderTabs();
   renderGroups();
   renderSummary();
+  updateScrollButtonVisibility();
 }
 
 async function loadCatalogFromSheet() {
