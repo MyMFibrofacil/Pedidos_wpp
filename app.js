@@ -8,6 +8,8 @@ let activeCategory = "";
 let searchTerm = "";
 let summaryOpen = false;
 let selectedIva = 0;
+let scrollButtonTimer = null;
+const SCROLL_BUTTON_IDLE_MS = 1400;
 
 const html = {
   root: document.documentElement,
@@ -94,11 +96,39 @@ function setGroupsMessage(message) {
   html.groups.innerHTML = `<p class="text-sm text-slate-500">${escapeHtml(message)}</p>`;
 }
 
-function updateScrollButtonVisibility() {
-  if (!html.scrollToBottom || !html.catalogScroll) return;
+function getRemainingScroll() {
+  if (!html.catalogScroll) return 0;
+
+  const containerIsScrollable = html.catalogScroll.scrollHeight - html.catalogScroll.clientHeight > 1;
+  const remainingContainer = html.catalogScroll.scrollHeight - html.catalogScroll.scrollTop - html.catalogScroll.clientHeight;
+  const remainingWindow =
+    Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0
+    ) -
+    (window.scrollY + window.innerHeight);
+
+  return containerIsScrollable ? remainingContainer : remainingWindow;
+}
+
+function hideScrollButton() {
+  if (!html.scrollToBottom) return;
+  html.scrollToBottom.classList.add("hidden");
+}
+
+function showScrollButtonTemporarily() {
+  if (!html.scrollToBottom) return;
+  const remaining = getRemainingScroll();
+  if (remaining < 24) {
+    hideScrollButton();
+    return;
+  }
+
   html.scrollToBottom.classList.remove("hidden");
-  html.scrollToBottom.style.display = "flex";
-  html.scrollToBottom.style.visibility = "visible";
+  if (scrollButtonTimer) clearTimeout(scrollButtonTimer);
+  scrollButtonTimer = setTimeout(() => {
+    hideScrollButton();
+  }, SCROLL_BUTTON_IDLE_MS);
 }
 
 function getActiveCategory() {
@@ -454,9 +484,16 @@ function bindEvents() {
       }
     });
 
-    html.catalogScroll.addEventListener("scroll", updateScrollButtonVisibility, { passive: true });
-    window.addEventListener("resize", updateScrollButtonVisibility, { passive: true });
-    updateScrollButtonVisibility();
+    html.catalogScroll.addEventListener("scroll", showScrollButtonTemporarily, { passive: true });
+    window.addEventListener("scroll", showScrollButtonTemporarily, { passive: true });
+    window.addEventListener(
+      "resize",
+      () => {
+        if (getRemainingScroll() < 24) hideScrollButton();
+      },
+      { passive: true }
+    );
+    hideScrollButton();
   }
 }
 
@@ -464,7 +501,7 @@ function render() {
   renderTabs();
   renderGroups();
   renderSummary();
-  updateScrollButtonVisibility();
+  hideScrollButton();
 }
 
 async function loadCatalogFromSheet() {
