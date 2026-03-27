@@ -1,4 +1,4 @@
-﻿const WHATSAPP_NUMBER = "5491159339958";
+﻿const WHATSAPP_NUMBER = "5491160049643";
 const SHEET_ID = "15-MwPmN2j1vtM1xB-RFcRd_2UI74A2kHcfx-hPuAMdw";
 const SHEET_GID = "0";
 
@@ -12,6 +12,7 @@ let scrollButtonTimer = null;
 const SCROLL_BUTTON_IDLE_MS = 1400;
 const SUBCATEGORY_NONE_KEY = "__sin_subcategoria__";
 const textCollator = new Intl.Collator("es", { sensitivity: "base", numeric: true });
+const MATERIAL_SORT_ORDER = ["melamina", "pino", "fibrofacil"];
 
 const html = {
   root: document.documentElement,
@@ -87,6 +88,11 @@ function isFibrofacilCategory(name) {
   return slugify(name) === "fibrofacil";
 }
 
+function getPromoUnits(categoryName, qty) {
+  if (!isFibrofacilCategory(categoryName)) return 0;
+  return Math.floor(qty / 10);
+}
+
 function formatMoney(value) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
@@ -96,6 +102,17 @@ function formatMoney(value) {
 
 function compareText(a, b) {
   return textCollator.compare(String(a || ""), String(b || ""));
+}
+
+function materialSortIndex(materialName) {
+  const normalized = slugify(materialName);
+  const index = MATERIAL_SORT_ORDER.findIndex((token) => normalized.includes(token));
+  return index === -1 ? MATERIAL_SORT_ORDER.length : index;
+}
+
+function compareMaterials(a, b) {
+  const byOrder = materialSortIndex(a.name) - materialSortIndex(b.name);
+  return byOrder !== 0 ? byOrder : compareText(a.name, b.name);
 }
 
 function setGroupsMessage(message) {
@@ -329,17 +346,20 @@ function summary() {
       group.products.forEach((product) => {
         const qty = getProductQty(product.id);
         if (qty > 0) {
-          selected.push({ category: cat.name, group: group.name, product, qty });
+          const promoQty = getPromoUnits(cat.name, qty);
+          selected.push({ category: cat.name, group: group.name, product, qty, promoQty });
         }
       });
     });
   });
 
-  let totalItems = 0;
+  let paidItems = 0;
+  let bonusItems = 0;
   let subtotal = 0;
   let ivaAmount = 0;
   selected.forEach((item) => {
-    totalItems += item.qty;
+    paidItems += item.qty;
+    bonusItems += item.promoQty;
     const lineSubtotal = item.qty * item.product.price;
     const lineIvaRate = isFibrofacilCategory(item.category) ? Math.max(selectedIva, 7) : selectedIva;
     const lineIva = lineSubtotal * (lineIvaRate / 100);
@@ -347,7 +367,15 @@ function summary() {
     ivaAmount += lineIva;
   });
 
-  return { selected, totalItems, subtotal, ivaAmount, totalPrice: subtotal + ivaAmount };
+  return {
+    selected,
+    paidItems,
+    bonusItems,
+    totalItems: paidItems + bonusItems,
+    subtotal,
+    ivaAmount,
+    totalPrice: subtotal + ivaAmount,
+  };
 }
 
 function renderSummary() {
@@ -363,6 +391,7 @@ function renderSummary() {
     html.summaryDetailsList.innerHTML = data.selected
       .map((item) => {
         const subtotal = item.qty * item.product.price;
+        const promoLabel = item.promoQty > 0 ? `<p class="text-xs text-emerald-600 font-semibold">Promo: +${item.promoQty} gratis</p>` : "";
         return `
           <div class="p-4 flex items-start justify-between gap-3">
             <div class="min-w-0">
@@ -370,6 +399,7 @@ function renderSummary() {
               <p class="text-xs text-slate-500 dark:text-slate-400">${escapeHtml(item.category)} · ${escapeHtml(
           item.group
         )}</p>
+              ${promoLabel}
             </div>
             <div class="text-right shrink-0">
               <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mb-1">
@@ -428,12 +458,16 @@ function buildWhatsAppText() {
 
   data.selected.forEach((item) => {
     const codeLabel = item.product.sku ? ` (#${item.product.sku})` : "";
-    lines.push(`* ${item.qty} x ${item.product.name}${codeLabel}`);
+    const promoText = item.promoQty > 0 ? ` + ${item.promoQty} promo` : "";
+    lines.push(`* ${item.qty} x ${item.product.name}${codeLabel}${promoText}`);
   });
 
   lines.push("");
   lines.push(`Subtotal: ${formatMoney(data.subtotal)}`);
   lines.push(`IVA: ${formatMoney(data.ivaAmount)}`);
+  if (data.bonusItems > 0) {
+    lines.push(`Unidades promo: ${data.bonusItems}`);
+  }
   lines.push(`Total unidades: ${data.totalItems}`);
   lines.push(`Total estimado: ${formatMoney(data.totalPrice)}`);
 
@@ -679,7 +713,7 @@ async function loadCatalogFromSheet() {
   });
 
   return Array.from(materials.values())
-    .sort((a, b) => compareText(a.name, b.name))
+    .sort(compareMaterials)
     .map((material) => ({
       id: material.id,
       name: material.name,
@@ -702,7 +736,8 @@ async function init() {
       return;
     }
 
-    activeCategory = catalog[0].id;
+    const melaminaCategory = catalog.find((cat) => slugify(cat.name).includes("melamina"));
+    activeCategory = (melaminaCategory || catalog[0]).id;
     render();
   } catch (error) {
     console.error(error);
