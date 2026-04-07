@@ -231,13 +231,13 @@ function filteredProducts(group) {
 function renderProductRow(product) {
   const qty = getProductQty(product.id);
   return `
-    <div class="p-4 flex items-center justify-between gap-4">
+    <div class="p-4 flex items-start justify-between gap-4">
       <div class="flex-1 min-w-0">
-        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${escapeHtml(product.name)}</h4>
+        <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100 break-words whitespace-normal leading-snug">${escapeHtml(product.name)}</h4>
         <p class="text-xs text-slate-500 dark:text-slate-400">SKU: ${escapeHtml(product.sku || "-")}</p>
         <p class="text-primary font-bold mt-1">${formatMoney(product.price)}</p>
       </div>
-      <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+      <div class="flex shrink-0 items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
         <button data-action="minus" data-product="${escapeHtml(product.id)}" class="size-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">
           <span class="material-symbols-outlined text-lg">remove</span>
         </button>
