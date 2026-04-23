@@ -2,19 +2,27 @@
 
 App web simple para tomar pedidos y enviarlos por WhatsApp en formato prolijo.
 
-## Uso rápido
+## Uso rapido
 
-1. Abrí `index.html` en el navegador del celular.
-2. Elegí productos y cantidades.
-3. Tocá **Enviar Pedido por WhatsApp**.
+1. Abri `index.html` en el navegador del celular.
+2. Elegi productos y cantidades.
+3. Toca **Enviar Pedido por WhatsApp**.
 
-## Configuración
+## Links por linea
 
-- Número de destino: editar `WHATSAPP_NUMBER` en `app.js`.
+- `fibrofacil/index.html`: abre la app para MyM Fibrofacil.
+- `pino/index.html`: abre la app para MyM Pino.
+- Ambos links redirigen al `index.html` compartido usando `?linea=...`.
+
+## Configuracion
+
+- Numeros de destino: editar `SALES_LINES` en `app.js`.
   - Formato ejemplo: `5491112345678` (sin `+`, sin espacios).
-- Catálogo: editar el arreglo `catalog` en `app.js`.
+- Catalogo: se carga desde Google Sheets.
 
 ## Estructura
 
-- `index.html`: interfaz mobile.
-- `app.js`: lógica de categorías, búsqueda, cantidades y mensaje a WhatsApp.
+- `index.html`: interfaz mobile compartida.
+- `app.js`: logica de categorias, busqueda, cantidades y mensaje a WhatsApp.
+- `fibrofacil/index.html`: entrada para la linea Fibrofacil.
+- `pino/index.html`: entrada para la linea Pino.

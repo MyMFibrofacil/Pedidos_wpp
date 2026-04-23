@@ -1,6 +1,16 @@
-﻿const WHATSAPP_NUMBER = "5491159339958";
-const SHEET_ID = "15-MwPmN2j1vtM1xB-RFcRd_2UI74A2kHcfx-hPuAMdw";
+﻿const SHEET_ID = "15-MwPmN2j1vtM1xB-RFcRd_2UI74A2kHcfx-hPuAMdw";
 const SHEET_GID = "0";
+const SALES_LINES = {
+  fibrofacil: {
+    name: "MyM Fibrofacil",
+    whatsappNumber: "5491159339958",
+  },
+  pino: {
+    name: "MyM Pino",
+    whatsappNumber: "5491159339958",
+  },
+};
+const DEFAULT_LINE_KEY = "fibrofacil";
 
 let catalog = [];
 const quantities = {};
@@ -29,7 +39,16 @@ const html = {
   summaryDetailsList: document.getElementById("summary-details-list"),
   sendButton: document.getElementById("send-whatsapp"),
   ivaOptions: document.getElementById("iva-options"),
+  channelBadge: document.getElementById("channel-badge"),
 };
+
+function getActiveSalesLine() {
+  const params = new URLSearchParams(window.location.search);
+  const lineKey = slugify(params.get("linea")) || DEFAULT_LINE_KEY;
+  return SALES_LINES[lineKey] || SALES_LINES[DEFAULT_LINE_KEY];
+}
+
+const activeSalesLine = getActiveSalesLine();
 
 function escapeHtml(value) {
   return String(value || "")
@@ -451,24 +470,22 @@ function buildWhatsAppText() {
   const lines = [];
   const today = new Date().toLocaleString("es-AR");
 
-  lines.push("Hola, quiero hacer este pedido:");
+  lines.push(`Hola, quiero hacer este pedido para ${activeSalesLine.name}:`);
   lines.push("");
   lines.push(`Fecha: ${today}`);
   lines.push("");
 
   data.selected.forEach((item) => {
     const codeLabel = item.product.sku ? ` (#${item.product.sku})` : "";
-    const promoText = item.promoQty > 0 ? ` + ${item.promoQty} promo` : "";
-    lines.push(`* ${item.qty} x ${item.product.name}${codeLabel}${promoText}`);
+    lines.push(`* ${item.qty} x ${item.product.name}${codeLabel}`);
+    if (item.promoQty > 0) {
+      lines.push(`  Promo bonificada: ${item.promoQty} u.`);
+    }
   });
 
   lines.push("");
   lines.push(`Subtotal: ${formatMoney(data.subtotal)}`);
   lines.push(`IVA: ${formatMoney(data.ivaAmount)}`);
-  if (data.bonusItems > 0) {
-    lines.push(`Unidades promo: ${data.bonusItems}`);
-  }
-  lines.push(`Total unidades: ${data.totalItems}`);
   lines.push(`Total estimado: ${formatMoney(data.totalPrice)}`);
 
   return lines.join("\n");
@@ -476,8 +493,17 @@ function buildWhatsAppText() {
 
 function sendToWhatsApp() {
   const text = buildWhatsAppText();
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  const url = `https://wa.me/${activeSalesLine.whatsappNumber}?text=${encodeURIComponent(text)}`;
   window.open(url, "_blank");
+}
+
+function applyLineBranding() {
+  document.title = `${activeSalesLine.name} | Pedido Mayorista`;
+
+  if (html.channelBadge) {
+    html.channelBadge.textContent = `Linea activa: ${activeSalesLine.name}`;
+    html.channelBadge.classList.remove("hidden");
+  }
 }
 
 function clearOrder() {
@@ -725,6 +751,7 @@ async function loadCatalogFromSheet() {
 }
 
 async function init() {
+  applyLineBranding();
   bindEvents();
   setGroupsMessage("Cargando productos...");
 
